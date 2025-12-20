@@ -1,0 +1,91 @@
+#include "Group.hpp"
+
+Group::Group(int startingID, size_t c) {
+    decisions = nullptr;
+    decisionCount = 0;
+    for (size_t i = 0; i < c; i++) {
+        students.Push(new Student(startingID + i));
+    }
+}
+
+Group::~Group() {
+    // Delete actual Student objects
+    for (size_t i = 0; i < students.size(); i++) {
+        if (students[i] != nullptr) {
+            delete students[i];
+        }
+    }
+    // Delete decision array
+    if (decisions) {
+        delete[] decisions;
+    }
+}
+
+void Group::AddStudent(Student* s) {
+    students.Push(s);
+}
+
+void Group::GroupDecision(int weather) {
+    // Reset decision array
+    if (decisions) {
+        delete[] decisions;
+    }
+    
+    decisionCount = students.size();
+    if (decisionCount > 0) {
+        decisions = new int[decisionCount];
+        for (size_t i = 0; i < decisionCount; i++) {
+            decisions[i] = students[i]->MakeDecision(weather);
+        }
+    } else {
+        decisions = nullptr;
+    }
+}
+
+Group& Group::operator+=(Group& other) {
+    for (size_t i = 0; i < other.students.size(); i++) {
+        this->students.Push(other.students[i]);
+    }
+
+    other.students.Clear(); 
+    return *this;
+}
+
+std::ostream& operator<<(std::ostream& os, Group& g) {
+    int playCount = 0;
+    int notPlayCount = 0;
+    
+    
+    for (size_t i = 0; i < g.decisionCount; i++) {
+        if (g.decisions[i] == 0) playCount++;
+        else notPlayCount++;
+    }
+
+    os << "  Stats: Play=" << playCount << ", NotPlay=" << notPlayCount << std::endl;
+    os << "  Play IDs: ";
+    
+    for (size_t i = 0; i < g.decisionCount; i++) {
+        if (g.decisions[i] == 0) { // 0 is Play
+            os << g.students[i]->GetID() << " ";
+        }
+    }
+    os << std::endl;
+    return os;
+}
+
+Group* Group::Split() {
+    if (students.size() >= 10) {
+        size_t splitIndex = students.size() / 2;
+        
+        Group* newGroup = new Group(0, 0); 
+        
+        for (size_t i = splitIndex; i < students.size(); i++) {
+            newGroup->AddStudent(students[i]);
+        }
+        
+        students.SetLen(splitIndex);
+
+        return newGroup;
+    }
+    return nullptr;
+}

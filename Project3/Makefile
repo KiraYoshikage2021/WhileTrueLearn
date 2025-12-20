@@ -1,0 +1,17 @@
+CXX = g++
+CXXFLAGS = -Wall -g
+
+TARGET = project3
+OBJS = main.o Decision.o
+
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
+
+main.o: main.cpp Decision.hpp
+	$(CXX) $(CXXFLAGS) -c main.cpp
+
+Decision.o: Decision.cpp Decision.hpp
+	$(CXX) $(CXXFLAGS) -c Decision.cpp
+
+clean:
+	rm -f *.o $(TARGET)

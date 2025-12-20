@@ -1,0 +1,11 @@
+#ifndef DECISION_HPP
+#define DECISION_HPP
+
+// 核心决策函数：输入天气int，返回决策int
+int MakeDecision(int weather);
+
+void PrintResults(int* weatherArr, int* decisionArr, int count);
+
+void PrintPlayPercentage(int* decisionArr, int count);
+
+#endif
